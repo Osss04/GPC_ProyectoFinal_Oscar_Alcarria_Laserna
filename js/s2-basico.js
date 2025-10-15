@@ -19,9 +19,9 @@ let collidableObjects = [];
 
 //para la entidad enemiga
 let enemyEntity = null;
-let enemySpeed = 0.35;
+let enemySpeed = 0.30;
 let enemyDetectionRange = 150;
-let enemyChaseSpeed = 0.4;
+let enemyChaseSpeed = 0.35;
 let isPlayerCaught = false;
 let enemyPathUpdateTimer = 0;
 let captureSound;
@@ -251,8 +251,8 @@ function generateDFSBacktrackingMaze(width, height) {
 
 //crear laberinto
 function createMazeLevel(groundMaterial) {
-    const mazeWidth = 25;
-    const mazeHeight = 25;
+    const mazeWidth = 21;
+    const mazeHeight = 21;
     const wallHeight = 18;
     const cellSize = 20;
     const ceilingHeight = wallHeight;
