@@ -1,0 +1,11 @@
+Model Information:
+* title:	Ghost in a white sheet
+* source:	https://sketchfab.com/3d-models/ghost-in-a-white-sheet-f921431cd5e54cc0a4a392af05f20dc3
+* author:	66md66 (https://sketchfab.com/66md66)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Ghost in a white sheet" (https://sketchfab.com/3d-models/ghost-in-a-white-sheet-f921431cd5e54cc0a4a392af05f20dc3) by 66md66 (https://sketchfab.com/66md66) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

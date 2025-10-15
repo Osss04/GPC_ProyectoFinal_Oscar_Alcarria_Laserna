@@ -1,0 +1,158 @@
+<!doctype html>
+<!-- 
+TRABAJO FINAL ÓSCAR ALCARRIA LASERNA HTML
+-->
+<html lang="es">
+	<head>
+		<meta charset='utf-8'>
+		<title>Scape from Backrooms!</title>
+		<style>
+			body {
+			background-color: #000;
+			margin: 0;
+			overflow: hidden;
+			}
+
+			#startScreen {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: radial-gradient(circle at center, #000000 60%, #0a0a0a 100%);
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				text-align: center;
+				color: #e8e8e8;
+				font-family: 'Open Sans', sans-serif;
+				z-index: 1000;
+				opacity: 0;
+				animation: fadeIn 2s ease-in forwards;
+			}
+
+			@keyframes fadeIn {
+				to { opacity: 1; }
+			}
+
+			#startScreen h1 {
+				font-family: 'Creepster', cursive;
+				font-size: 4em;
+				color: #e6e615;
+				text-shadow: 0 0 30px #ff0000, 0 0 60px #990000;
+				margin-bottom: 20px;
+				animation: flicker 2s infinite;
+			}
+
+			@keyframes flicker {
+				0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+					opacity: 1;
+				}
+				20%, 24%, 55% {
+					opacity: 0.6;
+				}
+			}
+
+			#startScreen p {
+				font-size: 1.15em;
+				max-width: 700px;
+				line-height: 1.6;
+				margin: 0 auto 30px;
+				color: #cccccc;
+				text-shadow: 0 0 8px #440000;
+				animation: fadeInText 3s ease-in forwards;
+				opacity: 0;
+				animation-delay: 1.5s;
+			}
+
+			@keyframes fadeInText {
+				to { opacity: 1; }
+			}
+
+			#playButton {
+				padding: 14px 36px;
+				font-size: 1.5em;
+				color: #fff;
+				background: #b30000;
+				border: none;
+				border-radius: 10px;
+				cursor: pointer;
+				transition: 0.3s;
+				box-shadow: 0 0 25px #ff0000;
+				animation: fadeInButton 4s ease-in forwards;
+				opacity: 0;
+				animation-delay: 3s;
+			}
+
+			@keyframes fadeInButton {
+				to { opacity: 1; }
+			}
+
+			#playButton:hover {
+				background: #ff1a1a;
+				box-shadow: 0 0 40px #ff5555;
+				transform: scale(1.05);
+			}
+
+	</style>
+	</head>
+	<body>
+		<!-- Interfaz de inicio -->
+		<div id="startScreen">
+			<h1>Scape from Backrooms!</h1>
+			<p>
+				Eres un investigador de la Asociación <i>Horizons</i>, una organización secreta dedicada a estudiar fenómenos paranormales.
+				Hace meses, el instituto detectó una red infinita de pasillos amarillos y húmedos que parecen una oficina. En algunos foros de investigación los llaman los <i>Backrooms</i>.<br><br>
+				Tu misión es simple: ponerte el traje NBQ y entrar al Nivel 1, localizar a la <b>Entidad 7-A</b> (un ser flotante de plasma que atraviesa el espacio), estudiar su comportamiento y escapar antes de que te encuentre. Te compartimos una imagen de como pensamos que es:
+			</p>
+			<img src="images/Entidad7A.png" alt="Entidad 7-A" style="max-width: 10%; height: auto; margin: 20px 0; border: 2px solid #fff;">
+			<p><b>Contamos contigo, eres nuestra única opción. ¡Mucha suerte!</b>
+			</p>
+			<!-- Sección de controles -->
+			<div style="
+				position: absolute;
+				bottom: 20px;
+				right: 20px;
+				display: flex;
+				align-items: center;
+				gap: 15px;
+				background: rgba(0, 0, 0, 0.4);
+				padding: 10px 15px;
+				border-radius: 10px;
+				border: 1px solid #fff;
+			">
+				<div id="controls" style="font-size: 0.9em;">
+				<ul style="list-style-type: none; margin: 0; padding: 0;">
+					<li><b>W/A/S/D</b> — Moverse</li>
+					<li><b>Shift</b> — Esprintar</li>
+					<li><b>V</b> — Tercera persona</li>
+				</ul>
+				</div>
+				<button id="playButton">Jugar</button>
+			</div>
+			</div>
+		
+
+		<!-- Contenedor del app -->
+		<div id="container"></div>
+
+		<!-- Scripts de biblioteca -->
+		<script src="lib/three.min_r140.js"></script>
+
+
+		<script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/controls/PointerLockControls.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/libs/fflate.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/loaders/OBJLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/loaders/MTLLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/loaders/GLTFLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/loaders/FBXLoader.js"></script>
+
+    
+		
+
+		<!-- Mi codigo -->
+		<script src="js/s2-basico.js"></script>
+
+	</body>
+</html>
