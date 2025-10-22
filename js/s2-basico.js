@@ -34,6 +34,9 @@ let idleAction;
 //salida del laberinto
 let exitPosition = null;
 
+const stats = new Stats();
+stats.showPanel(0); //FPS inicialmente. Picar para cambiar panel.
+document.getElementById( 'container' ).appendChild( stats.domElement );
 
 //inicialización
 init();
@@ -46,6 +49,10 @@ setTimeout(() => {
     loadEnemyEntity();
 }, 45000);
 render();
+
+
+
+
 
 function init() {
  
@@ -987,7 +994,7 @@ function render() {
     requestAnimationFrame(render);
     update();
     updateEnemyAI();
-    
+    stats.update();
 
 
     renderer.render(scene, camera);
