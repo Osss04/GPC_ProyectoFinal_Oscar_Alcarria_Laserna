@@ -507,10 +507,10 @@ function loadPlayerModel() {
 
         //texturas
         const textureLoader = new THREE.TextureLoader();
-        const texAlbedo   = textureLoader.load('models/hazman_suit/textures/Hazmat_albedo.jpg');
-        const texAO       = textureLoader.load('models/hazman_suit/textures/Hazmat_AO.jpg');
-        const texNormal   = textureLoader.load('models/hazman_suit/textures/Hazmat_normal.png');
-        const texRoughness = textureLoader.load('models/hazman_suit/textures/Hazmat_roughness.jpg');
+        const texAlbedo   = textureLoader.load('models/hazman_suit/Textures/Hazmat_albedo.jpg');
+        const texAO       = textureLoader.load('models/hazman_suit/Textures/Hazmat_AO.jpg');
+        const texNormal   = textureLoader.load('models/hazman_suit/Textures/Hazmat_normal.png');
+        const texRoughness = textureLoader.load('models/hazman_suit/Textures/Hazmat_roughness.jpg');
 
         //material pbr
         const hazmatMaterial = new THREE.MeshStandardMaterial({
