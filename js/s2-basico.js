@@ -47,7 +47,7 @@ loadPlayerModel();
 setTimeout(() => {
     console.log("45 segundos transcurridos. Generando entidad enemiga...");
     loadEnemyEntity();
-}, 45000);
+}, 180000);
 render();
 
 
@@ -258,8 +258,8 @@ function generateDFSBacktrackingMaze(width, height) {
 
 //crear laberinto
 function createMazeLevel(groundMaterial) {
-    const mazeWidth = 21;
-    const mazeHeight = 21;
+    const mazeWidth = 11;
+    const mazeHeight = 11;
     const wallHeight = 18;
     const cellSize = 20;
     const ceilingHeight = wallHeight;
