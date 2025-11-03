@@ -31,6 +31,14 @@ let mixer;
 let walkAction;
 let idleAction;
 
+//fix: añadir variables globales
+let interactableObjects = [];
+let isSlipping = false;
+let speedBoostActive = false;
+let speedBoostTimer = 0;
+let slipTimer = 0;
+let textureLoader; 
+
 //salida del laberinto
 let exitPosition = null;
 
@@ -96,6 +104,9 @@ function init() {
         captureSound.setLoop(false);
         captureSound.setVolume(0.8);
     });
+    textureLoader = new THREE.TextureLoader();
+
+    spawnCollectibleItems();
 
 }
 
@@ -141,7 +152,7 @@ function loadScene() {
     scene.add(camera);
 
     //textura del piso
-    const textureLoader = new THREE.TextureLoader();
+    //const textureLoader = new THREE.TextureLoader();
     const groundTexture = textureLoader.load('images/suelo-backrooms.png');
     groundTexture.wrapS = THREE.RepeatWrapping;
     groundTexture.wrapT = THREE.RepeatWrapping;
@@ -268,7 +279,7 @@ function createMazeLevel(groundMaterial) {
     const maze = generateDFSBacktrackingMaze(mazeWidth, mazeHeight);
     
     //cargar texturas
-    const textureLoader = new THREE.TextureLoader();
+    //const textureLoader = new THREE.TextureLoader();
     const wallTexture = textureLoader.load('images/pared-backrooms.png');
     wallTexture.wrapS = THREE.RepeatWrapping;
     wallTexture.wrapT = THREE.RepeatWrapping;
@@ -309,6 +320,7 @@ function createMazeLevel(groundMaterial) {
             ceiling.position.set(posX, ceilingHeight, posZ);
             ceiling.receiveShadow = true;
             scene.add(ceiling);
+            addCeilingDecorations(ceiling, textureLoader);
             
             //paredes
             if (maze[x][z] === 1) {
@@ -344,6 +356,7 @@ function createSingleWall(x, z, material, height, cellSize) {
     wall.castShadow = true;
     wall.receiveShadow = true;
     scene.add(wall);
+    addWallDecorations(wall, textureLoader);
     
     //agregar la pared al array de objetos colisionables
     collidableObjects.push(wall);
@@ -506,7 +519,7 @@ function loadPlayerModel() {
         playerModel.visible = false;
 
         //texturas
-        const textureLoader = new THREE.TextureLoader();
+        //const textureLoader = new THREE.TextureLoader();
         const texAlbedo   = textureLoader.load('models/hazman_suit/Textures/Hazmat_albedo.jpg');
         const texAO       = textureLoader.load('models/hazman_suit/Textures/Hazmat_AO.jpg');
         const texNormal   = textureLoader.load('models/hazman_suit/Textures/Hazmat_normal.png');
@@ -654,7 +667,7 @@ function updateEnemyAI() {
     if (isBlocked) {
         const sideStep = new THREE.Vector3(direction.z, 0, -direction.x).multiplyScalar(currentSpeed);
 
-        // hacia la izquierda
+        //hacia la izquierda
         const tryLeft = enemyPos.clone().add(sideStep);
         const tryRight = enemyPos.clone().sub(sideStep);
 
@@ -819,13 +832,177 @@ function loadBackgroundMusic() {
 //-------------------------
 
 //-------------------------
+// SECCIÓN 6: DECORACIONES
+//-------------------------
+
+//añadir decoraciones a las paredes
+function addWallDecorations(wall, textureLoader) {
+    const decorChance = Math.random();
+
+    //warning
+    if (decorChance < 0.3) {
+        const stainTexture = textureLoader.load('images/warning_poster.png');
+        const stain = new THREE.Mesh(
+            new THREE.PlaneGeometry(10, 6),
+            new THREE.MeshLambertMaterial({
+                map: stainTexture,
+                transparent: true,
+                opacity: 0.6,
+                side: THREE.DoubleSide
+            })
+        );
+        stain.position.set((Math.random() - 0.5) * 4, Math.random() * 1 + 3, wall.geometry.parameters.depth / 2 + 0.51);
+        wall.add(stain);
+    }
+
+    //warning
+    else if (decorChance < 0.6) {
+        const stainTexture = textureLoader.load('images/mancha.png');
+        const stain = new THREE.Mesh(
+            new THREE.PlaneGeometry(10, 6),
+            new THREE.MeshLambertMaterial({
+                map: stainTexture,
+                transparent: true,
+                opacity: 0.6,
+                side: THREE.DoubleSide
+            })
+        );
+        stain.position.set((Math.random() - 0.5) * 4, Math.random() * 1 + 5, wall.geometry.parameters.depth / 2 + 0.51);
+        wall.add(stain);
+    }
+}
+
+//añadir decoraciones al techo
+function addCeilingDecorations(ceiling, textureLoader) {
+    const chance = Math.random();
+    if (chance < 0.15) { 
+        const trapdoorTexture = textureLoader.load('images/trampilla.png');
+        const trapdoor = new THREE.Mesh(
+            new THREE.PlaneGeometry(10, 10),
+            new THREE.MeshLambertMaterial({
+                map: trapdoorTexture,
+                transparent: true,
+                side: THREE.DoubleSide,
+                depthWrite: false
+            })
+        );
+
+        trapdoor.rotation.x = -Math.PI / 2;//mirar hacia abajo
+
+        trapdoor.position.copy(ceiling.position);
+        trapdoor.position.y -= 0.05;
+
+        scene.add(trapdoor);
+    }
+}
+
+//generación de items boosters
+function spawnCollectibleItems() {
+    const gltfLoader = new THREE.GLTFLoader();
+    const itemModels = {
+        banana: 'models/banana_peel.glb',
+        chili: 'models/chili.glb'
+    };
+    const numItems = 20;
+    const playerStart = new THREE.Vector3(0, 0, 0); //pos spawn
+    for (let i = 0; i < numItems; i++) {
+        const itemType = Math.random() < 0.5 ? 'banana' : 'chili';
+
+        //posición aleatoria lejos del jugador
+        let posX, posZ, pos;
+        do {
+            posX = Math.random() * 400 - 200;
+            posZ = Math.random() * 400 - 200;
+            pos = new THREE.Vector3(posX, 0, posZ);
+        } while (pos.distanceTo(playerStart) < 50);
+
+         const posY = itemType === 'banana' ? 0.1 : 2.0;
+
+        gltfLoader.load(
+            itemModels[itemType],
+            (gltf) => {
+                const mesh = gltf.scene;
+
+                if (itemType === 'banana') {
+                    mesh.scale.set(0.03, 0.03, 0.03);//tamaño de la banana
+                } else {
+                    mesh.scale.set(1.5, 1.5, 1.5);//tamaño del chili
+                }
+
+                mesh.position.set(posX, posY, posZ);
+                mesh.rotation.y = Math.random() * Math.PI * 2;
+                mesh.itemType = itemType;
+
+                mesh.position.y += Math.random() * 0.3;
+
+                //sombras
+                mesh.traverse((child) => {
+                    if (child.isMesh) {
+                        child.material.side = THREE.DoubleSide;
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                    }
+                });
+
+                scene.add(mesh);
+                interactableObjects.push(mesh);
+            },
+            undefined,
+            (err) => console.error(`❌ Error al cargar modelo ${itemType}:`, err)
+        );
+    }
+
+    console.log(`${numItems} Boosters 3D generados`);
+}
+
+//boosters
+function triggerSlip() {
+    if (isSlipping) return;
+    console.log("🍌 ¡Te has resbalado!");
+    isSlipping = true;
+    slipTimer = 120;
+}
+
+function triggerSpeedBoost() {
+    if (speedBoostActive) return;
+    console.log("🌶️ ¡Velocidad aumentada!");
+    speedBoostActive = true;
+    speedBoostTimer = 300;
+}
+
+
+
+//-------------------------
+
+
+//-------------------------
 // update
 //-------------------------
 
 function update() {
     if (!isLocked) return;
 
-    const speed = 0.3;
+    let speed = 0.3;
+
+    if (speedBoostActive) {
+        speed = 0.6;
+        speedBoostTimer--;
+        if (speedBoostTimer <= 0) {
+            speedBoostActive = false;
+            console.log("Efecto de chili terminado.");
+        }
+    }
+
+    if (isSlipping) {
+        //movimiento aleatorio de la cámara al resbalar
+        camera.position.x += (Math.random() - 0.5) * 0.6;
+        camera.position.z += (Math.random() - 0.5) * 0.6;
+        slipTimer--;
+        if (slipTimer <= 0) {
+            isSlipping = false;
+            console.log("Efecto de la banana terminado.");
+        }
+    }
 
     //sprint al mantener Shift
     const isRunning = keys['ShiftLeft'] || keys['ShiftRight'];
@@ -989,6 +1166,32 @@ function update() {
             playerEscaped();
         }
     }
+
+    //comprobar recogida de objetos
+    if (!isPlayerCaught) {
+        const playerBox = new THREE.Box3().setFromCenterAndSize(
+            camera.position, 
+            new THREE.Vector3(4, 8, 4)
+        );
+
+        interactableObjects = interactableObjects.filter(obj => {
+            const objBox = new THREE.Box3().setFromObject(obj);
+            objBox.min.y += 6; //desplazar área de colisión hacia arriba
+            objBox.max.y += 6;
+
+            if (playerBox.intersectsBox(objBox)) {
+                console.log(`Colisión con ${obj.itemType}`);
+                if (obj.itemType === 'banana') {
+                    triggerSlip();
+                } else if (obj.itemType === 'chili') {
+                    triggerSpeedBoost();
+                }
+                scene.remove(obj);
+                return false;
+            }
+            return true;
+        });
+    }
 }
 function render() {
     requestAnimationFrame(render);
@@ -1002,7 +1205,7 @@ function render() {
 
 
 //-------------------------
-// SECCION 6: PANTALLA DE INICIO
+// SECCION 7: PANTALLA DE INICIO
 //-------------------------
 window.addEventListener("DOMContentLoaded", () => {
     const startScreen = document.getElementById("startScreen");
