@@ -69,6 +69,12 @@ function init() {
     renderer.setClearColor(new THREE.Color(0x222222));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    //fix 6/11 mejorar consistencia de sombras
+    renderer.shadowMap.autoUpdate = true;
+    renderer.shadowMap.needsUpdate = true;
+    renderer.shadowMap.renderReverseSided = false;
+    renderer.shadowMap.renderSingleSided = true;
+
     document.getElementById('container').appendChild(renderer.domElement);
 
     scene = new THREE.Scene();
@@ -144,6 +150,17 @@ function loadScene() {
     //luz del jugador
     playerLight = new THREE.PointLight(0xffdd66, 2, 80, 2);
     playerLight.castShadow = true;
+
+    //fix 6/11 correción del surface acne
+    playerLight.shadow.mapSize.width = 1024;
+    playerLight.shadow.mapSize.height = 1024;
+
+    playerLight.shadow.bias = -0.002;//desplazar mapa de sombras
+    playerLight.shadow.normalBias = 0.02;//ajustar sombras según normales
+
+    //evitar sombras lejanas innecesarias
+    playerLight.shadow.camera.near = 0.5;
+    playerLight.shadow.camera.far = 80;
 
     //añadir luz a 1a o 3a persona
     camera.add(playerLight);
